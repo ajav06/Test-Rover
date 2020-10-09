@@ -1,0 +1,13 @@
+{
+  "name": "test-rover",
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "start": "nuxt start"
+  },
+  "dependencies": {
+    "nuxt": "^2.14.6",
+    "nuxt-buefy": "^0.4.3"
+  }
+}
