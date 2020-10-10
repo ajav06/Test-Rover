@@ -4,7 +4,13 @@
             <b-button type="is-info" :disabled="disabled" @click="validateCommands">Init Test</b-button>
         </b-field>
 
-        {{ robot.width }}
+        <div class="content">
+            <ul>
+               <li v-for="result in results" :key="result">
+                   {{ result }}
+               </li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -13,6 +19,11 @@
         name: 'Output',
         props: {
             robot: Object
+        },
+        data(){
+            return {
+                results: [],
+            }
         },
         computed:{
             disabled(){
@@ -83,6 +94,8 @@
                     }
                 }
                 console.log(`${valid}, ${rover.orientation}, (${rover.x},${rover.y}).`)
+
+                this.results.push(`${valid}, ${rover.orientation}, (${rover.x},${rover.y}).`)
             }
         }
     }
