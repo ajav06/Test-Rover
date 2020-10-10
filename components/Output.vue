@@ -1,16 +1,13 @@
 <template>
     <div>
         <b-field class="has-text-centered">
-            <b-button type="is-info" :disabled="disabled" @click="validateCommands">Init Test</b-button>
-        </b-field>
 
-        <div class="content">
-            <ul>
-               <li v-for="result in results" :key="result">
-                   {{ result }}
-               </li>
-            </ul>
-        </div>
+            <b-button type="is-info" :disabled="disabled" 
+                :loading="loading" @click="validateCommands">
+                Init Test
+            </b-button>
+
+        </b-field>
     </div>
 </template>
 
@@ -23,6 +20,7 @@
         data(){
             return {
                 results: [],
+                loading: false,
             }
         },
         computed:{
@@ -38,15 +36,33 @@
                 return s.replace(/\s+/g, '').trim();
             },
 
-            validateCommands() {
-                if (this.disabled) {
-                    return 'Error -> Please enter all data'
+            stringOrientation(orientation){
+                switch(orientation){
+                    case 'N':
+                        return 'North'
+                        break
+                    case 'S':
+                        return 'South'
+                        break
+                    case 'E':
+                        return 'East'
+                        break
+                    case 'W':
+                        return 'West'
+                        break
+                    default:
+                        break
                 }
+            },
 
+            validateCommands() {
+
+                this.loading = true
+                
                 let rover = {
                     orientation: this.removeWhiteSpace(this.robot.orientation).toUpperCase(),
-                    x: Number(this.removeWhiteSpace(this.robot.coordinates).split(',')[0]),
-                    y: Number(this.removeWhiteSpace(this.robot.coordinates).split(',')[1])
+                    x: Number(this.removeWhiteSpace(this.robot.coordinates.x)),
+                    y: Number(this.removeWhiteSpace(this.robot.coordinates.y))
                 }
 
                 const array = this.removeWhiteSpace(this.robot.movements.toUpperCase()).split('')
@@ -87,15 +103,18 @@
                             }
                             break
                         default:
+                            valid = false
                             break
                     }
                     if (!valid) {
                         break
                     }
-                }
-                console.log(`${valid}, ${rover.orientation}, (${rover.x},${rover.y}).`)
 
-                this.results.push(`${valid}, ${rover.orientation}, (${rover.x},${rover.y}).`)
+                    this.results.push('Valid: ' + `${valid}, `.toUpperCase() + 'Orientation: ' + this.stringOrientation(`${rover.orientation}`) + `, Coordenates: (${rover.x},${rover.y}). \n`)
+                }
+
+                this.$emit('response', this.results)
+                this.loading = false
             }
         }
     }
