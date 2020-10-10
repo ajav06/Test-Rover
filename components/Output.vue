@@ -28,28 +28,24 @@
                 if (!this.robot.width || !this.robot.height || !this.robot.orientation || !this.robot.coordinates || !this.robot.movements) {
                     return true
                 }
-                return false;
+                return false
             }
         },
         methods: {
             removeWhiteSpace(s) {
-                return s.replace(/\s+/g, '').trim();
+                return s.replace(/\s+/g, '').trim()
             },
 
             stringOrientation(orientation){
                 switch(orientation){
                     case 'N':
                         return 'North'
-                        break
                     case 'S':
                         return 'South'
-                        break
                     case 'E':
                         return 'East'
-                        break
                     case 'W':
                         return 'West'
-                        break
                     default:
                         break
                 }
@@ -66,7 +62,9 @@
                 }
 
                 const array = this.removeWhiteSpace(this.robot.movements.toUpperCase()).split('')
+                
                 let valid = true
+                
                 for (let i = 0; i < array.length; i++) {
                     const movement = array[i]
                     switch (rover.orientation) {
@@ -74,32 +72,40 @@
                             if (movement === 'A') {
                                 valid = rover.y + 1 <= this.robot.height
                                 valid && rover.y++
-                            } else {
+                            } else if (['L','R'].indexOf(movement) !== -1){
                                 rover.orientation = movement === 'L' ? 'W' : 'E'
+                            } else {
+                                valid = false
                             }
                             break
                         case 'S':
                             if (movement === 'A') {
                                 valid = rover.y - 1 >= 0
                                 valid && rover.y--
-                            } else {
+                            } else if (['L','R'].indexOf(movement) !== -1){
                                 rover.orientation = movement === 'L' ? 'E' : 'W'
+                            } else {
+                                valid = false
                             }
                             break
                         case 'E':
                             if (movement === 'A') {
                                 valid = rover.x + 1 <= this.robot.width
                                 valid && rover.x++
-                            } else {
+                            } else if (['L','R'].indexOf(movement) !== -1){
                                 rover.orientation = movement === 'L' ? 'N' : 'S'
+                            } else {
+                                valid = false
                             }
                             break
                         case 'W':
                             if (movement === 'A') {
                                 valid = rover.x - 1 >= 0
                                 valid && rover.x--
-                            } else {
+                            } else if (['L','R'].indexOf(movement) !== -1){
                                 rover.orientation = movement === 'L' ? 'S' : 'N'
+                            } else {
+                                valid = false
                             }
                             break
                         default:
@@ -107,10 +113,17 @@
                             break
                     }
                     if (!valid) {
+                        this.$buefy.toast.open({
+                            message: 'Data Error!',
+                            type: 'is-danger'
+                        })
                         break
                     }
 
-                    this.results.push('Valid: ' + `${valid}, `.toUpperCase() + 'Orientation: ' + this.stringOrientation(`${rover.orientation}`) + `, Coordenates: (${rover.x},${rover.y}). \n`)
+                    if(i===0)
+                        this.results.push('Valid: ' + `${valid}, `.toUpperCase() + 'Orientation: ' + this.stringOrientation(`${rover.orientation}`) + `, Coordenates: (${rover.x},${rover.y}).`)
+                    else
+                        this.results.push('\nValid: ' + `${valid}, `.toUpperCase() + 'Orientation: ' + this.stringOrientation(`${rover.orientation}`) + `, Coordenates: (${rover.x},${rover.y}).`)
                 }
 
                 this.$emit('response', this.results)
